@@ -1,0 +1,12 @@
+services:
+  test:
+    container_name: test
+    image: ubuntu:latest
+    privileged: true
+    stdin_open: true
+    tty: true
+    command: >
+        sh -c "
+        sleep infinity"
+    volumes:
+      - .:/app

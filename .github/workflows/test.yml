@@ -1,0 +1,43 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v6
+
+      - name: print runner info
+        run: |
+          set -eo pipefail
+          cat /proc/cpuinfo
+          lscpu
+          lscpu -e
+          lscpu -C
+
+      - name: docker compose up
+        run: |
+          set -eo pipefail
+          docker version
+          docker compose version
+          docker compose up -d
+          docker ps
+
+      - name: install gcc
+        run: |
+          docker compose exec test bash -c "apt-get update && apt-get install -y curl gcc make"
+
+      - name: compile
+        run: |
+          docker compose exec test bash -c "bash /app/test.sh"
